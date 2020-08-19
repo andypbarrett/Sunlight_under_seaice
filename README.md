@@ -4,7 +4,7 @@ Code for Sunlight Under Sea Ice project
 
 __Under Construction__
 
-Use `git clone `
+Use `git clone git@github.com:andypbarrett/Sunlight_under_seaice.git` to add to your personal repo.
 
 ## Example Usage
 ```
