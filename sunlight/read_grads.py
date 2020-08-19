@@ -36,9 +36,11 @@ def parse_tincr(s):
     
         
 def parse_xyzdim(line):
-    fields = line.split()
-    return dict(zip(["ndim", "scale", "start", "increment"],
-                    [int(fields[0]), fields[1].upper(), float(fields[2]), float(fields[3])]))
+    maxfield = 4
+    castas = [int, str, float, float]
+    fields = [c(e) for c, e in zip(castas, line.split())]
+    fields = fields + [None for i in range(maxfield - len(fields))]  # Deals with missing increment field
+    return dict(zip(["ndim", "scale", "start", "increment"], fields))
 
 
 def parse_tdim(line):
@@ -74,10 +76,19 @@ def get_shape(ctl):
             ctl['ZDEF']['ndim'])
 
 
+def calc_end(dimdef):
+    '''Calculate end of dimension range'''
+    incr = dimdef['increment'] if dimdef['increment'] else 0.
+    return dimdef['start'] + (incr * dimdef['ndim'])
+
+
 def generate_xyzdim(dimdef):
     '''Generate a dimension'''
-    end = dimdef['start'] + (dimdef['increment'] * dimdef['ndim'])
-    return np.arange(dimdef['start'], end, dimdef['increment'])
+    if dimdef['ndim'] > 1:
+        dim = np.arange(dimdef['start'], calc_end(dimdef), dimdef['increment'])
+    else:
+        dim = [dimdef['start']]
+    return dim
     
     
 def generate_tdim(dimdef):
