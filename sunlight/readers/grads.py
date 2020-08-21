@@ -102,7 +102,7 @@ def read_gdat(gradsfile, shape):
     return data
     
     
-def read_grads(gradsfile, ctlfile=None):
+def read(gradsfile, ctlfile=None):
     '''Reads a grads file
 
     gradsfile - path the a gdat file
