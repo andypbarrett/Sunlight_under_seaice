@@ -129,6 +129,6 @@ def read_grads(gradsfile, ctlfile=None):
     t = generate_tdim(ctl['TDEF'])
     
     da = xr.DataArray(data, coords={'time': t, 'x': x, 'y': y, 'z': z},
-                      dims=['time', 'x', 'y', 'z'])
+                      dims=['time', 'x', 'y', 'z']).chunk({'time': 100})
     
     return da
