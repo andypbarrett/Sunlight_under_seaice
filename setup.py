@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     # Needed to silence warnings (and to be a worthwhile package)
-    name='sunlight_usi',
+    name='sunlight',
     url='',
     author='Andy Barrett',
     author_email='andypbarrett@gmail.com',
