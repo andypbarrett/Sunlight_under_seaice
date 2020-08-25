@@ -7,7 +7,7 @@ setup(
     author='Andy Barrett',
     author_email='andypbarrett@gmail.com',
     # Needed to actually package something
-    packages=['sunlight_usi'],
+    packages=['sunlight'],
     # Needed for dependencies
     install_requires=['numpy','matplotlib','cartopy','pandas','xarray'],
     # *strongly* suggested for sharing
