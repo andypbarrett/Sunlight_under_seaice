@@ -1,4 +1,4 @@
-from .readers import grads
+import grads
 
 # Na25 grid parameters
 numberColumnsX, numberRowsY = 361, 361
@@ -13,7 +13,7 @@ def read(gdatfile, ctlfile):
     coordY = [upperLeftCornerY + ((i + 0.5) * cellSizeY)
               for i in range(numberRowsY)]
 
-    dataArray = readers.grads.read(gdatfile, ctlfile=ctlfile).squeeze()
+    dataArray = grads.read(gdatfile, ctlfile=ctlfile).squeeze()
     dataArray.coords['x'] = coordX
     dataArray.coords['y'] = coordY
 
