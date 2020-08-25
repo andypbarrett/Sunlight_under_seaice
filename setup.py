@@ -2,12 +2,12 @@ from setuptools import setup
 
 setup(
     # Needed to silence warnings (and to be a worthwhile package)
-    name='sunlight',
+    name='sunderseaice',
     url='',
     author='Andy Barrett',
     author_email='andypbarrett@gmail.com',
     # Needed to actually package something
-    packages=['sunlight'],
+    packages=['sunderseaice'],
     # Needed for dependencies
     install_requires=['numpy','matplotlib','cartopy','pandas','xarray'],
     # *strongly* suggested for sharing
