@@ -1,4 +1,4 @@
-import readers.grads
+import .readers.grads
 
 # Na25 grid parameters
 numberColumnsX, numberRowsY = 361, 361
