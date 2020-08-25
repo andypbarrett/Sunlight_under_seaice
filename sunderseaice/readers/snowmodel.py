@@ -1,4 +1,4 @@
-import grads
+from sunderseaice.readers import grads
 
 # Na25 grid parameters
 numberColumnsX, numberRowsY = 361, 361
