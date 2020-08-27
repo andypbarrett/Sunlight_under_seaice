@@ -31,7 +31,37 @@ from netCDF4 import Dataset #netcdf routines that you need to install into pytho
 
 from read_grads import read_grads
 from sunderseaice.readers import snowmodel
-#from readers.snowmodel import read as read_snowmodel
+
+def regrid_melt_onset_to_ease_north(ingrid):
+    '''It does what it says on the tin
+
+    ingrid - numpy array in NSIDC North Polar Stereographic grid
+    '''
+    
+    src_proj = {'pixel_width': 25000,
+                'pixel_height': 25000,
+                'ccrs': {'central_latitude': 90.0,
+                         'central_longitude': -45.0,
+                         'false_easting': 0.0,
+                         'false_northing': 0.0,
+                         'true_scale_latitude': 70 },
+                'bounds': [-3850000.000, 3750000., -5350000., 5850000.000]}
+    src_globe = ccrs.Globe(datum=None, semimajor_axis=6378273., semiminor_axis=6356889.449)
+    src_crs = ccrs.Stereographic(**src_proj['ccrs'], globe=src_globe)
+    
+    #define 25-km EASE grid
+    dst_proj = {'pixel_width': 25067.5,
+                'pixel_height': 25067.5,
+                'ccrs': {'central_latitude': 90.,
+                         'central_longitude': 0.,
+                         'false_easting': 0.0,
+                         'false_northing': 0.0},
+                'bounds': [-4524683.8, 4524683.8, -4524683.8, 4524683.8]}
+    dst_globe = ccrs.Globe(datum=None, semimajor_axis=6371228, semiminor_axis=6371228)
+    dst_crs = ccrs.LambertAzimuthalEqualArea(**dst_proj['ccrs'], globe=dst_globe)
+    dst_size = (361, 361)
+
+    
 
 # Get EASE grid
 
@@ -47,25 +77,10 @@ datapath = '/Users/stroeve/Documents/seaice/seaice_melt'
 
 datafile=os.path.join(datapath,'snod.gdat')
 ctlfile = os.path.join(datapath,'SM_snod_merra2_01Aug1980-31Jul2018.ctl')
-#datafile=os.path.join(datapath,"snod_M2.gdat")
-#ctlfile=os.path.join(datapath,"snod_M2.ctl")
 
-#snod = read_grads(datafile, ctlfile=ctlfile)
 snod=snowmodel.read(datafile,ctlfile)
-#snod = snod.squeeze()*100. #convert to cm and remove the extra z dimension
-snod=snod.squeeze()
-#to plot a selected date
-snod.sel(time='2000-01-01').plot()  #using .sel uses named coordinates  and you could give half-coordinates and have the values interpolated between
-#snod.sel(time='2000-01-01',x=-0.05,y=0.05,method='nearest') #.sel allows selections along the time dimension by year and month as well as by slices
-#to access all data for 2000 you would write snod.sel(time='2000')
-#to get values for a specific location for a whole year
-# test=snod.sel(time='2000',x=180,y=180)
-# test.plot()
-#how to get slies of x and y coordinates snod.sel(x=slice(170,180), y=slice(160,180))
-#generate a time-series of mean snow depth for a region selected from one period to another
-# ts = snod.sel(time=slice("19990801", "20000731"), x=slice(170,190), y=slice(160,180)).mean(dim=['x','y'])
-# ts.plot()                        
 
+snod=snod.squeeze()
 
 # #to acess some values
 # snod[100,180,180].values 
@@ -113,29 +128,6 @@ def get_SM_depths_from_date(my_date):
 #we need to reproject all the sea ice melt onset files to match the SnowModel grid.
 #Define NSIDC PS grid
 #The default ellipsoid is WGS84. However, the NSIDC PS grid uses the Hugh's 1880 ellipsoid. To account for this, a separate Globe object has to be created and passed to the Stereographic object.
-src_proj = {'pixel_width': 25000,
-            'pixel_height': 25000,
-            'ccrs': {'central_latitude': 90.0,
-                      'central_longitude': -45.0,
-                      'false_easting': 0.0,
-                      'false_northing': 0.0,
-                      'true_scale_latitude': 70 },
-            'bounds': [-3850000.000, 3750000., -5350000., 5850000.000]}
-src_globe = ccrs.Globe(datum=None, semimajor_axis=6378273., semiminor_axis=6356889.449)
-
-src_crs = ccrs.Stereographic(**src_proj['ccrs'], globe=src_globe)
-
-#define 25-km EASE2 grid
-dst_proj = {'pixel_width': 25067.5,
-            'pixel_height': 25067.5,
-            'ccrs': {'central_latitude': 90.,
-                      'central_longitude': 0.,
-                      'false_easting': 0.0,
-                      'false_northing': 0.0},
-            'bounds': [-4524683.8, 4524683.8, -4524683.8, 4524683.8]}
-dst_globe = ccrs.Globe(datum=None, semimajor_axis=6371228, semiminor_axis=6371228)
-dst_crs = ccrs.LambertAzimuthalEqualArea(**dst_proj['ccrs'], globe=dst_globe)
-dst_size = (361, 361)
 
 
 
