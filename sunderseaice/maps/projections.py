@@ -42,25 +42,28 @@ class Projection():
         self.bounds = projection_dict['bounds']
         self.shape = projection_dict['shape']
 
+        self.transform = Affine(self.pixel_width,
+                                self.row_rotation,
+                                self.bounds[0],
+                                self.column_rotation,
+                                self.pixel_height,
+                                self.bounds[3])
+
+        self.rasterio_crs = CRS.from_proj4(self.crs)
         
     def __repr__(self):
         return f'Projection: {self.name} (EPSG: {self.epsg})'
 
-    
-    def transform(self):
-        '''Return Affine matrix'''
-        return Affine(self.pixel_width,
-                      self.row_rotation,
-                      self.bounds[0],
-                      self.column_rotation,
-                      self.pixel_height,
-                      self.bounds[3])
 
-    
-    def rasterio_crs(self):
-        '''Return rasterio crs'''
-        return CRS.from_proj4(self.crs)
+    def get_x_coords(self):
+        x, _ = zip(*[self.transform * (i+0.5, 0.5) for i in range(self.shape[1])])
+        return list(x)
 
+
+    def get_y_coords(self):
+        _, y = zip(*[self.transform * (0.5, j+0.5) for j in range(self.shape[0])])
+        return list(y)
+    
 
 class EASEGridAVHRRNorth25(Projection):
     '''
