@@ -1,5 +1,6 @@
 # Regrids melt onset data from North Polar Stereographic 25 km to EASE-Grid AVHRR 25 km
 import warnings
+import os
 import numpy as np
 import xarray as xr
 
@@ -35,12 +36,18 @@ def regrid_Dataset(ds):
     return xr.Dataset({ds[v].name: regrid_DataArray(ds[v]) for v in ds.data_vars})
 
 
+def write_to_netcdf(ds, filepath):
+    encoding = {v: {'zlib': True, 'complevel': 9} for v in ds.data_vars}
+    ds.to_netcdf(filepath, encoding=encoding)
+
+
 def main(fileout):
 
     dataset_ps = read_ps(DATADIR)
+    dataset_ps = dataset_ps.where(dataset_ps > 0.)
 
     dataset_ease = regrid_Dataset(dataset_ps)
-    dataset_ease.to_netcdf(os.path.join(DATADIR, fileout))
+    write_to_netcdf(dataset_ease, os.path.join(DATADIR, fileout))
 
 
 if __name__ == "__main__":
