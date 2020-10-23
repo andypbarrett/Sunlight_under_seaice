@@ -1,0 +1,82 @@
+# Shopping list of IS2 granules and sentinel-2 images with melt ponds
+# From Julienne Stroeve 2020-10-18
+
+20190726
+
+Sentinel-2 image: 20190726_T14XMQ_shifted.tif
+
+ATL03 data: ATL03_20190726213326_04400404_003_01.h5
+
+ 
+
+Time difference: ~28 minutes
+
+Cloud coverage: 7%
+
+ 
+
+Pond1:
+
+Nlim: 80.8115020290365
+
+Slim: 80.7508467111988
+
+Beam: gt2l
+
+ 
+
+Pond2:
+
+Nlim: 80.538540520524
+
+Slim: 80.4830992306673
+
+Beam: gt2l
+
+ 
+
+20190726
+
+Sentinel-2 image: 20190726_T13XEJ_shifted.tif
+
+ATL03 data: ATL03_20190726213835_04400405_003_01.h5
+
+ 
+
+Time difference: ~28 minutes
+
+Cloud coverage: 3%
+
+ 
+
+Pond3:
+
+Nlim: 79.8921113712758
+
+Slim: 79.8183878804069
+
+Beam: gt3l
+
+ 
+
+20190805
+
+Sentinel-2 image: 2019085_T11XMK.tif
+
+ATL03 data: ATL03_20190805215948_05930404_003_01.h5
+
+ 
+
+Time difference: ~4 minutes
+
+Cloud coverage: 9%
+
+ 
+
+Pond4:
+
+Nlim: 80.2682595521007
+
+Slim: 80.2209581089578
+
+Beam: gt3l
