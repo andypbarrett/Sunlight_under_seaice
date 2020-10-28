@@ -294,12 +294,12 @@ def main():
     # Supply some default search parameters, just for testing purposes.
     # These are only used if the parameters aren't filled in up above.
     if 'short_name' in short_name:
-        short_name = 'MOD10A2'
-        version = '6'
-        time_start = '2001-01-01T00:00:00Z'
-        time_end = '2019-03-07T22:09:38Z'
+        short_name = 'ATL03'
+        version = '003'
+        time_start = None  #'2001-01-01T00:00:00Z'
+        time_end = None  #'2019-03-07T22:09:38Z'
         bounding_box = ''
-        polygon = '-109,37,-102,37,-102,41,-109,41,-109,37'
+        polygon = None  #'-109,37,-102,37,-102,41,-109,41,-109,37'
         filename_filter = '*A2019*'  # '*2019010204*'
         url_list = []
 
@@ -308,7 +308,7 @@ def main():
                               bounding_box=bounding_box,
                               polygon=polygon, filename_filter=filename_filter)
 
-    cmr_download(url_list)
+    #cmr_download(url_list)
 
 
 if __name__ == '__main__':
