@@ -38,6 +38,8 @@ import json
 import netrc
 import ssl
 import sys
+import os
+import datetime as dt
 from getpass import getpass
 
 try:
@@ -48,14 +50,22 @@ except ImportError:
     from urlparse import urlparse
     from urllib2 import urlopen, Request, HTTPError, URLError, build_opener, HTTPCookieProcessor
 
+from make_granule_order_list import gran_ID
+
 short_name = 'ATL03'
 version = '003'
-time_start = '2018-10-13T00:00:00Z'
-time_end = '2020-10-21T14:58:58Z'
+time_start = '2019-07-26T00:00:00Z'
+time_end = '2019-07-26T23:59:59Z'
 bounding_box = ''
-polygon = '-110.9906345906639,56.92157128373386,-94.78420080948466,55.180405885124785,-94.43809907762787,61.92921861557562,-104.96814230145068,62.125964224106866,-110.9906345906639,56.92157128373386'
-filename_filter = '*_003_*'
+polygon = ''  #'-109,37,-102,37,-102,41,-109,41,-109,37'
+filename_filter = "ATL03_20190726213326_04400404_003_01.h5"
 url_list = []
+
+granules = [
+    "ATL03_20190726213326_04400404_003_01.h5",
+    "ATL03_20190726213835_04400405_003_01.h5",
+    "ATL03_20190805215948_05930404_003_01.h5",
+    ]
 
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
 URS_URL = 'https://urs.earthdata.nasa.gov'
@@ -64,6 +74,7 @@ CMR_FILE_URL = ('{0}/search/granules.json?provider=NSIDC_ECS'
                 '&sort_key[]=start_date&sort_key[]=producer_granule_id'
                 '&scroll=true&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
 
+OUTPUT_PATH = '/home/apbarret/Data/ICESat-2/ATL03'
 
 def get_username():
     username = ''
@@ -161,7 +172,7 @@ def build_cmr_query_url(short_name, version, time_start, time_end,
     return CMR_FILE_URL + params
 
 
-def cmr_download(urls):
+def cmr_download(urls, outpath=''):
     """Download files from list of urls."""
     if not urls:
         return
@@ -174,7 +185,7 @@ def cmr_download(urls):
         if not credentials and urlparse(url).scheme == 'https':
             credentials = get_credentials(url)
 
-        filename = url.split('/')[-1]
+        filename = os.path.join(outpath, url.split('/')[-1])
         print('{0}/{1}: {2}'.format(str(index).zfill(len(str(url_count))),
                                     url_count,
                                     filename))
@@ -287,28 +298,40 @@ def cmr_search(short_name, version, time_start, time_end,
         quit()
 
 
+def get_granule_search_params(granule_id):
+    """Returns short_name, time_start, time_end, filename_filter"""
+
+    granule_params = gran_ID(granule_id)
+    
+    time_start = granule_params['timestamp'].replace(hour=0, minute=0,
+                                                     second=0, microsecond=0)
+    time_end = time_start + dt.timedelta(days=1)
+
+    time_start = time_start.isoformat()
+    time_end = time_end.isoformat()
+    short_name = granule_params['product']
+    vesion= granule_params['version']
+    filename_filter = granule_params['producer_granule_id']
+
+    return short_name, version, time_start, time_end, filename_filter
+
+
 def main():
     global short_name, version, time_start, time_end, bounding_box, \
         polygon, filename_filter, url_list
 
-    # Supply some default search parameters, just for testing purposes.
-    # These are only used if the parameters aren't filled in up above.
-    if 'short_name' in short_name:
-        short_name = 'ATL03'
-        version = '003'
-        time_start = None  #'2001-01-01T00:00:00Z'
-        time_end = None  #'2019-03-07T22:09:38Z'
-        bounding_box = ''
-        polygon = None  #'-109,37,-102,37,-102,41,-109,41,-109,37'
-        filename_filter = '*A2019*'  # '*2019010204*'
-        url_list = []
+    for granule_id in granules:
 
-    if not url_list:
-        url_list = cmr_search(short_name, version, time_start, time_end,
-                              bounding_box=bounding_box,
-                              polygon=polygon, filename_filter=filename_filter)
+        (short_name,
+         version,
+         time_start,
+         time_end,
+         filename_filter) = get_granule_search_params(granule_id)
+        
+        url_list.extend(cmr_search(short_name, version, time_start, time_end,
+                                   filename_filter=filename_filter))
 
-    #cmr_download(url_list)
+    cmr_download(url_list, outpath=OUTPUT_PATH)
 
 
 if __name__ == '__main__':

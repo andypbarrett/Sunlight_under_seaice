@@ -39,7 +39,11 @@ def gran_ID(gran):
     result = {
         "producer_granule_id": gran,
         "product": product,
+        "reference_ground_track": reference_ground_track,
+        "orbital_cycle": orbital_cycle,
+        "segment": segment,
         "version": version,
+        "revision": revision,
         "timestamp": dt.datetime(int(year), int(month), int(day),
                                  int(hour), int(minute), int(second)),
         }
