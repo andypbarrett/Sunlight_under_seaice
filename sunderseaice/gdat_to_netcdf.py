@@ -142,10 +142,23 @@ def gdat_to_netcdf(datafile, ctlfile, outfile, variable_name, reanalysis):
     
 
 if __name__ == "__main__":
-    DATAPATH = Path("/home/apbarret/Data/Snow_on_seaice/SnowModelOutput")
-    datafile = DATAPATH / "MERRA2" / "snod.gdat"
-    ctlfile = DATAPATH / "MERRA2" / "SM_snod_merra2_01Aug1980-31Jul2018.ctl"
-    outfile = DATAPATH / "MERRA2" / "snod.nc"
-    variable_name = "snow_depth"
-    reanalysis = "MERRA2"
-    gdat_to_netcdf(datafile, ctlfile, outfile, variable_name, reanalysis)
+    #DATAPATH = Path("/home/apbarret/Data/Snow_on_seaice/SnowModelOutput")
+    #datafile = DATAPATH / "MERRA2" / "snod.gdat"
+    #ctlfile = DATAPATH / "MERRA2" / "SM_snod_merra2_01Aug1980-31Jul2018.ctl"
+    #outfile = DATAPATH / "MERRA2" / "snod.nc"
+    #variable_name = "snow_depth"
+    #reanalysis = "MERRA2"
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Convert gdat files to netcdf for SnowModel output")
+    parser.add_argument("gdatfile", type=str, help="Path to gdat file to convert")
+    parser.add_argument("ctlfile", type=str, help="Path to ctl file associated with gdat file")
+    parser.add_argument("ncfile", type=str, help="Path to netcdf file")
+    parser.add_argument("variable_name", type=str, help="Name of variable to convert",
+                        choices=["snow_depth", "snow_density"])
+    parser.add_argument("reanalysis", type=str, help="Reanalysis used to force SnowModel",
+                        choices=["ERA5", "MERRA2"])
+
+    args = parser.parse_args()
+    
+    gdat_to_netcdf(args.gdatfile, args.ctlfile, args.ncfile, args.variable_name, args.reanalysis)
