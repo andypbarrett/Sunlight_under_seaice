@@ -121,7 +121,7 @@ def write_to_netcdf(ds, outfile):
     ds.to_netcdf(outfile, encoding=encoding)
 
 
-def gdat_to_netcdf(datafile, ctlfile, outfile, variable_name, reanalysis):
+def gdat_to_netcdf(datafile, ctlfile, outfile, variable_name, reanalysis, verbose=False):
     """
     Converts gdat formatted file to a CF compliant netcdf
     
@@ -130,24 +130,24 @@ def gdat_to_netcdf(datafile, ctlfile, outfile, variable_name, reanalysis):
     :outfile: path to output netcdf file
     :variable_name: name of variable (currently snow_depth or snow_density)
     """
-    
+
+    if verbose: print(f"Converting {datafile} to {outfile}")
+
+    if verbose: print(f"   reading {datafile}")
     ds = snowmodel.read(datafile, ctlfile).to_dataset(name=variable_name)
     ds = ds.drop("z")  # z-dimension is not needed here
 
+    if verbose: print(f"   adding lat and lon grids")
     ds = snowmodel.add_ease_north_latlon(ds)
 
+    if verbose: print(f"   adding attributes")
     add_attributes(ds, variable_name, reanalysis)
 
+    if verbose: print(f"   writing to {outfile}")
     write_to_netcdf(ds, outfile)
     
 
 if __name__ == "__main__":
-    #DATAPATH = Path("/home/apbarret/Data/Snow_on_seaice/SnowModelOutput")
-    #datafile = DATAPATH / "MERRA2" / "snod.gdat"
-    #ctlfile = DATAPATH / "MERRA2" / "SM_snod_merra2_01Aug1980-31Jul2018.ctl"
-    #outfile = DATAPATH / "MERRA2" / "snod.nc"
-    #variable_name = "snow_depth"
-    #reanalysis = "MERRA2"
     import argparse
 
     parser = argparse.ArgumentParser(description="Convert gdat files to netcdf for SnowModel output")
@@ -158,7 +158,9 @@ if __name__ == "__main__":
                         choices=["snow_depth", "snow_density"])
     parser.add_argument("reanalysis", type=str, help="Reanalysis used to force SnowModel",
                         choices=["ERA5", "MERRA2"])
-
+    parser.add_argument("--verbose", "-v", action="store_true")
+    
     args = parser.parse_args()
     
-    gdat_to_netcdf(args.gdatfile, args.ctlfile, args.ncfile, args.variable_name, args.reanalysis)
+    gdat_to_netcdf(args.gdatfile, args.ctlfile, args.ncfile, args.variable_name, args.reanalysis,
+                   verbose=args.verbose)
