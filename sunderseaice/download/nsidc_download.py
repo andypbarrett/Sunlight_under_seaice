@@ -164,11 +164,11 @@ def build_cmr_query_url(short_name, version, time_start, time_end,
     params += build_version_query_params(version)
     params += '&temporal[]={0},{1}'.format(time_start, time_end)
     if polygon:
-        params += '&polygon={0}'.format(polygon)
+        params += '&polygon[]={0}'.format(polygon)
     elif bounding_box:
         params += '&bounding_box={0}'.format(bounding_box)
     elif circle:
-        params += '&circle={0}'.format(','.join(circle))
+        params += '&circle[]={0}'.format(','.join(circle))
     if filename_filter:
         option = '&options[producer_granule_id][pattern]=true'
         params += '&producer_granule_id[]={0}{1}'.format(filename_filter, option)
@@ -256,14 +256,14 @@ def cmr_filter_urls(search_results):
 
 def cmr_search(short_name, version, time_start, time_end,
                bounding_box='', polygon='', circle='',
-               filename_filter=''):
+               filename_filter='', verbose=True, return_search_page=False):
     """Perform a scrolling CMR query for files matching input criteria."""
     cmr_query_url = build_cmr_query_url(short_name=short_name, version=version,
                                         time_start=time_start, time_end=time_end,
                                         bounding_box=bounding_box,
                                         circle=circle, 
                                         polygon=polygon, filename_filter=filename_filter)
-    print('Querying for data:\n\t{0}\n'.format(cmr_query_url))
+    if verbose: print('Querying for data:\n\t{0}\n'.format(cmr_query_url))
 
     cmr_scroll_id = None
     ctx = ssl.create_default_context()
@@ -282,10 +282,11 @@ def cmr_search(short_name, version, time_start, time_end,
                 headers = {k.lower(): v for k, v in dict(response.info()).items()}
                 cmr_scroll_id = headers['cmr-scroll-id']
                 hits = int(headers['cmr-hits'])
-                if hits > 0:
-                    print('Found {0} matches.'.format(hits))
-                else:
-                    print('Found no matches.')
+                if verbose:
+                    if hits > 0:
+                        print('Found {0} matches.'.format(hits))
+                    else:
+                        print('Found no matches.')
             search_page = response.read()
             search_page = json.loads(search_page.decode('utf-8'))
             url_scroll_results = cmr_filter_urls(search_page)
@@ -298,7 +299,10 @@ def cmr_search(short_name, version, time_start, time_end,
 
         if hits > CMR_PAGE_SIZE:
             print()
-        return urls
+        if return_search_page:
+            return search_page
+        else:
+            return urls
     except KeyboardInterrupt:
         quit()
 
