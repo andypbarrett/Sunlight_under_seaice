@@ -72,7 +72,7 @@ def main(product, version, radius=20000., resolution=3, verbose=False,
 
     csvfile = Path(outdir) / f"{product}.{version}.polarstern.floe2.granules_list.csv"
     if verbose: print(f"Writing list to {csvfile}")
-    print(gdf)
+    gdf.to_csv(csvfile)
 
 
 if __name__ == "__main__":
