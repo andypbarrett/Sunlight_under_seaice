@@ -1,5 +1,6 @@
 """Searches for ICESat-2 products that intersect with Polarstern
    MOSAiC drift"""
+from pathlib import Path
 import datetime as dt
 
 import sunderseaice.download.nsidc_download as cmr
@@ -27,8 +28,16 @@ def search_for_one_day(search_date, geometry, product, version):
     return results
 
 
-def main(product, version, radius=20000., resolution=3, verbose=False):
+def main(product, version, radius=20000., resolution=3, verbose=False,
+         outdir='.'):
+    """Search for ICESat-2 product granules on Polarstern drift and write to
+       csv.
 
+    :product: product short name.  (str) E.g. ATL03
+    :version: product version. (str)
+    :radius: search radius in meters (float).  Default 20000 m.
+    :resolution: vertex resolution for polygon (int).  Default 3.
+    """
     if verbose: print("Reading Polarstern drift track")
     gdf = read_polarstern_track()
     gdf = gdf[floe2.start:floe2.end]
@@ -38,6 +47,7 @@ def main(product, version, radius=20000., resolution=3, verbose=False):
                                    resolution=resolution)
     npoints = len(gdf_buffer)
 
+    if verbose: print("Searching for granules")
     gdf["granule"] = None
     gdf["metadata"] = None
     for search_date, geometry in gdf_buffer.iteritems():
@@ -56,7 +66,11 @@ def main(product, version, radius=20000., resolution=3, verbose=False):
                 raise ValueError(f"Expects second result to be metadata (.xml) got {results[1]}")
     gdf = gdf.dropna()
     ngranules = len(gdf)
-    
+
+    if verbose: print(f"Found {ngranules} for {npoints}")
+
+    csvfile = Path(outdir) / f"{product}.{version}.polarstern.floe2.granules_list.csv"
+    if verbose: print(f"Writing list to {csvfile}")
     print(gdf)
 
 
@@ -73,8 +87,11 @@ if __name__ == "__main__":
                         help="radius of circle region to search")
     parser.add_argument("--resolution", type=int, default=3,
                         help="resolution of search polygon (default=3)")
+    parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args()
-    print(args)
-    exit()
-    
-    main(product, version)
+
+    main(args.product,
+         args.version,
+         radius=args.search_radius,
+         resolution=args.resolution,
+         verbose=args.verbose)
