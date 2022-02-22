@@ -21,9 +21,6 @@ import xarray as xr
 import download.nsidc_download as cmr
 from grid import SSMI_PolarStereoNorth25km 
 
-DATAPATH = Path("/home/apbarret/src/SunlightUnderSeaIce/data")
-POLARSTERN_TRACK_FILE = DATAPATH / "polarstern_track_full_cruise.txt"
-
 # Start and end dates for Polarstern on floe
 on_floe_dates = {
     1: (dt.datetime(2019, 10, 4), dt.datetime(2020, 5, 17)),
@@ -42,21 +39,6 @@ map_extent = [-2349878.8355433852, 2349878.8355433857, -2349878.8355433852, 2349
 #      - select temporal frequency - default=12
 #      - create search polygon, check handedness, output as list
 # Loop through queries
-
-
-def read_polarstern_track():
-    """Reads the drift track of the polarstern into a pandas dataframe"""
-    columns = ["Date", "Latitude", "Longitude", "Speed", "Course"]
-    df = pd.read_csv(
-        POLARSTERN_TRACK_FILE,
-        skiprows=1, 
-        delim_whitespace=True,
-        index_col=0,
-        parse_dates=True,
-        header=None,
-        names=columns
-    )
-    return df
 
 
 def select_midday(df):
@@ -111,24 +93,6 @@ indicates a counter-clockwise oriented ring."""
         return True
     else:
         return False 
-
-
-def shapely_to_cmr(poly):
-    """Converts shapely polygon to string containing lon, lat
-       expected by CMR.  CMR expects coordinates to be counter-
-       clockwise.  Code automatically reverses this"""
-    poly_ccw = orient(poly, sign=1.0)  # Force polygons to be counter-clockwise
-    assert LinearRing(poly_ccw.exterior.coords).is_ccw, "Polygon is not counter-clockwise"
-    return ",".join([f"{x},{y}" for x, y in poly_ccw.exterior.coords])
-                    #coords = list(poly.exterior.coords)
-    # LinearRing(polygon_or.exterior.coords).is_ccw also works
-    # polygon_or = orient(polygon, sign=1.0) returns ccw polygon
-    #print(isccw)
-    #if isccw(coords):
-    #    pr = coords
-    #else:
-    #    pr = coords[::-1]
-    #)
 
 
 def _circle_params(point, search_radius = 1000.):
