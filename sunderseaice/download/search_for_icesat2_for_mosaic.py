@@ -37,6 +37,7 @@ def main(product, version, radius=20000., resolution=3, verbose=False,
     :version: product version. (str)
     :radius: search radius in meters (float).  Default 20000 m.
     :resolution: vertex resolution for polygon (int).  Default 3.
+    :outdir: path to output directory (str).  Default "."
     """
     if verbose: print("Reading Polarstern drift track")
     gdf = read_polarstern_track()
@@ -87,6 +88,8 @@ if __name__ == "__main__":
                         help="radius of circle region to search")
     parser.add_argument("--resolution", type=int, default=3,
                         help="resolution of search polygon (default=3)")
+    parser.add_argument("--outdir", "-o", type=str, default=".",
+                        help="Path to output directory for csv")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args()
 
@@ -94,4 +97,5 @@ if __name__ == "__main__":
          args.version,
          radius=args.search_radius,
          resolution=args.resolution,
+         outdir=args.outdir,
          verbose=args.verbose)
