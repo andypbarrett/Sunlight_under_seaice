@@ -50,7 +50,7 @@ except ImportError:
     from urlparse import urlparse
     from urllib2 import urlopen, Request, HTTPError, URLError, build_opener, HTTPCookieProcessor
 
-from download.make_granule_order_list import gran_ID
+from sunderseaice.download.make_granule_order_list import gran_ID
 
 short_name = 'ATL03'
 version = '003'
