@@ -48,7 +48,7 @@ def main(product, version, radius=20000., resolution=3, verbose=False,
                                    resolution=resolution)
     npoints = len(gdf_buffer)
 
-    if verbose: print("Searching for granules")
+    if verbose: print(f"Searching for {product} version {version} granules")
     gdf["granule"] = None
     gdf["metadata"] = None
     for search_date, geometry in gdf_buffer.iteritems():
