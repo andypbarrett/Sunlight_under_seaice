@@ -3,6 +3,8 @@
 import h5py
 import xarray as xr
 
+from sunderseaice.readers.data_dictionary import ATL03_DATA_DICT
+
 
 def load_atl20_month(filepath):
     """
@@ -36,3 +38,20 @@ def atl10(filepath):
     return gt2l
 
 
+def atl03(filepath, beam, group="heights",
+          drop_variables=['pce_mframe_cnt', 'ph_id_channel',
+                          'ph_id_count', 'ph_id_pulse']):
+    """Read ATL03 geolocated photons into xarray
+
+    :filepath: str or pathlib.Path containing filepath
+
+    :beam: beam identifier (gt1r, gt1l, gt2r, gt2l, gt3r, gt3l).  
+           Should I return a single beam.  I think so because beams do not have a common
+           geolocation
+    
+    :returns: xarray.Dataset containing photon data group and geolocation
+    """
+    group = f"{beam}/{group}" 
+    ds = xr.open_dataset(filepath, group=group, chunks="auto",
+                         drop_variables=drop_variables)
+    return ds
