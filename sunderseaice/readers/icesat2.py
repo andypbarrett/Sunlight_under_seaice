@@ -38,10 +38,11 @@ def load_atl07(filepath, beam,
     """
     group_name = f"{beam}/sea_ice_segments"
     sea_ice_segments_ds = xr.open_dataset(filepath, group=group_name)
-    group_name = group_name + '/' + 'heights'
-    heights_ds = xr.open_dataset(filepath, group=group_name,
-                              drop_variables=None)
-    ds = xr.concat([sea_ice_segments_ds, heights_ds], dim='delta_time')
+    #group_name = group_name + '/' + 'heights'
+    #heights_ds = xr.open_dataset(filepath, group=group_name,
+    #                          drop_variables=None)
+    #ds = xr.concat([sea_ice_segments_ds, heights_ds], dim='delta_time')
+    ds = sea_ice_segments_ds
     return ds
 
 
