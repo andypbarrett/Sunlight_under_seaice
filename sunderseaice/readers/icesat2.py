@@ -22,6 +22,29 @@ def load_atl20_month(filepath):
     return ds
 
 
+def load_atl07(filepath, beam,
+               variables = []):
+    """Loads ATL07 sea ice height variables.  
+
+    Height and geolocation variables are in different groups so variables are read from
+    the HDF5 file separately.
+
+    :filepath: str or pathlib.Path object containing filepath
+    :beam: name of beam (gt1r, gt1l, gt2r, gt2l, gt3r, or gt3l)
+    
+    :variables: name of variables to read from H5 file.
+
+    :return: xarray.Dataset object
+    """
+    group_name = f"{beam}/sea_ice_segments"
+    sea_ice_segments_ds = xr.open_dataset(filepath, group=group_name)
+    group_name = group_name + '/' + 'heights'
+    heights_ds = xr.open_dataset(filepath, group=group_name,
+                              drop_variables=None)
+    ds = xr.concat([sea_ice_segments_ds, heights_ds], dim='delta_time')
+    return ds
+
+
 def load_atl10(filepath):
     '''Read ATL10 (Freeboard)'''
     f = h5py.File(filepath, 'r')
