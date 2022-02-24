@@ -18,6 +18,15 @@ def load_granule_list(product, version='005', floe="floe2"):
     granule_list = (GRANULE_LIST_PATH /
                     f"{product.upper()}.{version}.polarstern.{floe}.granules_list.csv")
     df = pd.read_csv(granule_list, index_col=0, parse_dates=True)
-    #df['geometry'] = df['geometry'].apply(wkt.loads)
-    
-    return df
+    df['geometry'] = df['geometry'].apply(wkt.loads)
+    gdf = gpd.GeoDataFrame(df, crs=4326)
+    return gdf
+
+
+def get_bounds(geometry, radius=20000., resolution=3):
+    """Returns minx, maxx, miny, maxy for buffer region
+
+    :geometry: shapely geometry
+    """
+    bounds = geometry.to_crs(3413).buffer(radius, resolution).to_crs(4326).bounds
+    return bounds.values
