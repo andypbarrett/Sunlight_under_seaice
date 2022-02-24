@@ -22,7 +22,7 @@ def load_atl20_month(filepath):
     return ds
 
 
-def atl10(filepath):
+def load_atl10(filepath):
     '''Read ATL10 (Freeboard)'''
     f = h5py.File(filepath, 'r')
     gt2l = xr.Dataset({
@@ -38,7 +38,7 @@ def atl10(filepath):
     return gt2l
 
 
-def atl03(filepath, beam, group="heights",
+def load_atl03(filepath, beam, group="heights",
           drop_variables=['pce_mframe_cnt', 'ph_id_channel',
                           'ph_id_count', 'ph_id_pulse']):
     """Read ATL03 geolocated photons into xarray
