@@ -46,7 +46,7 @@ def load_atl07(filepath, beam,
     return ds
 
 
-def load_atl10(filepath):
+def load_atl10(filepath, beam):
     '''Read ATL10 (Freeboard)'''
     f = h5py.File(filepath, 'r')
     gt2l = xr.Dataset({
