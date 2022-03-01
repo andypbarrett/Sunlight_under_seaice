@@ -23,10 +23,14 @@ def load_granule_list(product, version='005', floe="floe2"):
     return gdf
 
 
-def get_bounds(geometry, radius=20000., resolution=3):
+def get_bounds(record, radius=20000., resolution=3, to_crs=4326):
     """Returns minx, maxx, miny, maxy for buffer region
 
     :geometry: shapely geometry
     """
-    bounds = geometry.to_crs(3413).buffer(radius, resolution).to_crs(4326).bounds
+    proj_crs = 3414
+    if to_crs == proj_crs:
+        bounds = record.to_crs(3413).buffer(radius, resolution).bounds
+    else:
+        bounds = record.to_crs(3413).buffer(radius, resolution).to_crs(to_crs).bounds
     return bounds.values
