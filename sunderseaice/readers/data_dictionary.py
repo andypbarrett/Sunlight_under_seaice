@@ -11,7 +11,7 @@ ATL07_DATA_DICT = {
     "height_segment_id": "sea_ice_segments/height_segment_id",
     "latitude": "sea_ice_segments/latitude",
     "longitude": "sea_ice_segments/longitude",
-    "segment_dist_x": "sea_ice_segments/segment_dist_x",
+    "segment_dist_x": "sea_ice_segments/seg_dist_x",
     "across_track_distance": "sea_ice_segments/heights/across_track_distance",
     "height_segment_asr_calc": "sea_ice_segments/heights/height_segment_asr_calc",
     "height_segment_confidence": "sea_ice_segments/heights/height_segment_confidence",
