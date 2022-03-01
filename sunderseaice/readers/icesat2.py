@@ -3,9 +3,29 @@
 import h5py
 import xarray as xr
 
-from sunderseaice.readers.data_dictionary import ATL03_DATA_DICT
+from sunderseaice.readers.data_dictionary import ATL03_DATA_DICT, ATL07_DATA_DICT
 
 
+def convert_attributes(attrs):
+    return {k: (v.decode() if isinstance(v, bytes) else v) for k, v in attrs.items()}
+
+
+def h5var_to_dataarray(f, group_path, dim_name='segment'):
+    """Generates an xarray.DataArray from an H5 variables
+
+    :f: h5 file object
+    :group_path: path to variables
+
+    :returns: xarray.DataArray - with dummy variables
+    """
+    assert group_path in f, f"{group_path} not found in {f.filename}"
+    
+    dataset = f[group_path]
+    return xr.DataArray(dataset[:],
+                        attrs=convert_attributes(dataset.attrs),
+                        name=dataset.name.split('/')[-1])
+
+    
 def load_atl20_month(filepath):
     """
     Loads datasets in monthly group of ATL20 h5 file with coordinates
@@ -29,6 +49,10 @@ def load_atl07(filepath, beam,
     Height and geolocation variables are in different groups so variables are read from
     the HDF5 file separately.
 
+    The common dimension for the two groups, delta_time, is not unique, so dim is changed
+    to height_segment_id (folling A.Petty's advice).  This allows the two groups to be
+    concatenated.
+
     :filepath: str or pathlib.Path object containing filepath
     :beam: name of beam (gt1r, gt1l, gt2r, gt2l, gt3r, or gt3l)
     
@@ -36,13 +60,11 @@ def load_atl07(filepath, beam,
 
     :return: xarray.Dataset object
     """
-    group_name = f"{beam}/sea_ice_segments"
-    sea_ice_segments_ds = xr.open_dataset(filepath, group=group_name)
-    #group_name = group_name + '/' + 'heights'
-    #heights_ds = xr.open_dataset(filepath, group=group_name,
-    #                          drop_variables=None)
-    #ds = xr.concat([sea_ice_segments_ds, heights_ds], dim='delta_time')
-    ds = sea_ice_segments_ds
+    f = h5py.File(filepath, 'r')
+    data_arrays = {}
+    for var, group in ATL07_DATA_DICT.items():
+        data_arrays[var] = h5var_to_dataarray(f, f"{beam}/{group}")
+    ds = xr.Dataset(data_arrays)
     return ds
 
 
