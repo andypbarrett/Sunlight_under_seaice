@@ -65,6 +65,8 @@ def load_atl07(filepath, beam,
     for var, group in ATL07_DATA_DICT.items():
         data_arrays[var] = h5var_to_dataarray(f, f"{beam}/{group}")
     ds = xr.Dataset(data_arrays)
+    ds = ds.swap_dims({'dim_0': 'height_segment_id'})
+    ds = ds.set_coords(['latitude', 'longitude', 'delta_time'])
     return ds
 
 
