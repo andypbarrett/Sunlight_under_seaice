@@ -64,10 +64,10 @@ def load_atl07(filepath, beam,
 
     :return: xarray.Dataset object
     """
-    f = h5py.File(filepath, 'r')
-    data_arrays = {}
-    for var, group in ATL07_DATA_DICT.items():
-        data_arrays[var] = h5var_to_dataarray(f, f"{beam}/{group}")
+    with h5py.File(filepath, 'r') as f:
+        data_arrays = {}
+        for var, group in ATL07_DATA_DICT.items():
+            data_arrays[var] = h5var_to_dataarray(f, f"{beam}/{group}")
     ds = xr.Dataset(data_arrays)
     ds = ds.swap_dims({'dim_0': 'height_segment_id'})
     ds = ds.set_coords(['latitude', 'longitude', 'delta_time'])
