@@ -39,3 +39,14 @@ ATL03_DATA_DICT = {
         "signal_conf_ph",
         ]
     }
+
+
+# Are in the gtx group
+ATL10_DATA_DICT = {
+    'freeboard': 'freeboard_beam_segment/beam_freeboard/beam_fb_height',
+    'geoseg_beg': 'freeboard_beam_segment/beam_freeboard/geoseg_beg',
+    'geoseg_end': 'freeboard_beam_segment/beam_freeboard/geoseg_end',
+    'latitude': 'freeboard_beam_segment/beam_freeboard/latitude',
+    'longitude': 'freeboard_beam_segment/beam_freeboard/longitude',
+    }
+
