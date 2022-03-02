@@ -1,5 +1,7 @@
 """Module to read ICESat-2 files into xarray.Dataset"""
 
+import numpy as np
+
 import h5py
 import xarray as xr
 
@@ -21,9 +23,11 @@ def h5var_to_dataarray(f, group_path, dim_name='segment'):
     assert group_path in f, f"{group_path} not found in {f.filename}"
     
     dataset = f[group_path]
-    return xr.DataArray(dataset[:],
+    da = xr.DataArray(dataset[:],
                         attrs=convert_attributes(dataset.attrs),
                         name=dataset.name.split('/')[-1])
+    #TODO: mask out _FillValue
+    return da
 
     
 def load_atl20_month(filepath):
